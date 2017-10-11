@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--设置状态栏的颜色-->
-    <color name="colorPrimaryDark">#1e88e5</color>
+    <color name="colorPrimaryDark">#ec3f7a</color>
     <!--设置Toolbar的颜色-->
-    <color name="colorPrimary">#2196f3</color>
+    <color name="colorPrimary">#fd6e9f</color>
     <!-- 设置Toolbar 字体颜色 -->
     <color name="textColorPrimary">#FFFFFF</color>
     <!-- 设置背景颜色-->
@@ -11,8 +11,7 @@
     <!-- 设置底部导航栏颜色 -->
     <color name="navigationBarColor">#000000</color>
     <!--强调显示颜色-->
-    <color name="colorAccent">#6200ea</color>
-
+    <color name="colorAccent">#fc3f80</color>
 
 
     <!--  主页面卡片背景颜色  -->
@@ -28,15 +27,4 @@
 
     <!--   详情页面内容文字颜色  -->
     <color name="editTextColor">#2c2c2c</color>
-
-
-    <!--  about me useing color   -->
-    <color name="white">#ffffff</color>
-    <color name="transparent">#00000000</color>
-    <color name="white_66">#66ffffff</color>
-    <color name="black">#000000</color>
-    <color name="black_66">#66000000</color>
-    <color name="background">#f2f2f2</color>
-    <color name="text_content_color">#333333</color>
-    <!--  about me useing color   -->
 </resources>
