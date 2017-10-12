@@ -42,6 +42,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ImageView iv_clean_password;
     private ImageView iv_show_password;
     private Button btn_login;
+    private Button btn_register;
     private TextView forget_password;
     private int screenHeight = 0;   //屏幕高度
     private int keyHeight = 0;      //软键盘弹起后所占高度
@@ -67,6 +68,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         iv_clean_password = (ImageView) findViewById(R.id.iv_clean_password);
         iv_show_password = (ImageView) findViewById(R.id.iv_show_pwd);
         btn_login = (Button) findViewById(R.id.btn_login);
+        btn_register = (Button) findViewById(R.id.btn_register);
 //        forget_password = (TextView) findViewById(R.id.forget_password);
 
         //获取屏幕高度
@@ -250,6 +252,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 } else {
                     Toast.makeText(this, "请输入正确的账号和密码", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.btn_register:
+                // TODO
                 break;
             default:
                 break;
