@@ -1,4 +1,4 @@
-package com.example.smile.whereareyou;
+package com.example.smile.whereareyou.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,9 +16,10 @@ import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
+
+import com.example.smile.whereareyou.R;
+import com.example.smile.whereareyou.activity.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -40,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void initView() {
-
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         toolbar.setTitle("WhereAreYou");
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
@@ -64,8 +64,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         headLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent_login = new Intent(MainActivity.this, LoginActivity.class);
-//                startActivity(intent_login);
+                Intent intent_login = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent_login);
             }
         });
 
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.nav_home:
                         mDrawerLayout.closeDrawers();
                         break;
-                    case R.id.nav_news:
+                    case R.id.nav_history:
                         mDrawerLayout.closeDrawers();
 //                        Intent intent_news = new Intent(MainActivity.this, NewsActivity.class);
 //                        startActivity(intent_news);
