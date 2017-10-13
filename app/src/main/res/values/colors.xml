@@ -39,4 +39,10 @@
     <color name="background">#f2f2f2</color>
     <color name="text_content_color">#333333</color>
     <!--  about me useing color   -->
+
+
+
+    <!--  login useing color   -->
+    <color name="registered">#b0b8b2</color>
+    <!--  login useing color   -->
 </resources>
