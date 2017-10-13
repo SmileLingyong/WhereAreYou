@@ -42,8 +42,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ImageView iv_clean_password;
     private ImageView iv_show_password;
     private Button btn_login;
-    private Button btn_register;
-    private TextView forget_password;
+    private TextView text_registered;
+    private TextView text_forget_password;
     private int screenHeight = 0;   //屏幕高度
     private int keyHeight = 0;      //软键盘弹起后所占高度
     private float scale = 0.8f;     //logo缩放比例
@@ -68,8 +68,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         iv_clean_password = (ImageView) findViewById(R.id.iv_clean_password);
         iv_show_password = (ImageView) findViewById(R.id.iv_show_pwd);
         btn_login = (Button) findViewById(R.id.btn_login);
-        btn_register = (Button) findViewById(R.id.btn_register);
-//        forget_password = (TextView) findViewById(R.id.forget_password);
+        text_registered = (TextView) findViewById(R.id.text_registered);
+        text_forget_password = (TextView) findViewById(R.id.text_forget_password);
 
         //获取屏幕高度
         screenHeight = this.getResources().getDisplayMetrics().heightPixels;
@@ -93,6 +93,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         iv_clean_password.setOnClickListener(this);
         iv_show_password.setOnClickListener(this);
         btn_login.setOnClickListener(this);
+        text_registered.setOnClickListener(this);
+        text_forget_password.setOnClickListener(this);
+
 
         //设置输入账号监听事件
         et_number.addTextChangedListener(new TextWatcher() {
@@ -115,6 +118,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
+
+
         //设置输入密码监听事件
         et_password.addTextChangedListener(new TextWatcher() {
             @Override
@@ -234,10 +239,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.iv_show_pwd:
                 if (et_password.getInputType() != InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) {
                     et_password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                    iv_show_password.setImageResource(R.drawable.login_pass_gone);
+                    iv_show_password.setImageResource(R.drawable.login_pass_visuable);
                 } else {
                     et_password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    iv_show_password.setImageResource(R.drawable.login_pass_visuable);
+                    iv_show_password.setImageResource(R.drawable.login_pass_gone);
                 }
                 String pwd = et_password.getText().toString();
                 if (!TextUtils.isEmpty(pwd))
@@ -253,9 +258,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(this, "请输入正确的账号和密码", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.btn_register:
-                // TODO
+            case R.id.text_registered:
+                Toast.makeText(this, "注册新用户", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.text_forget_password:
+                Toast.makeText(this, "忘记密码", Toast.LENGTH_SHORT).show();
+                break;
+
             default:
                 break;
         }

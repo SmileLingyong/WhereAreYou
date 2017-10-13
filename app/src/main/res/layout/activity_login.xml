@@ -141,16 +141,33 @@
                 android:textColor="#ffffff"
                 android:textSize="18sp" />
 
-            <Button
-                android:id="@+id/btn_register"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/bg_btn_login_selected"
-                android:text="@string/login_register"
-                android:textColor="#ffffff"
-                android:textSize="18sp" />
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/text_registered"
+                    android:clickable="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="10dp"
+                    android:text="注册新用户"
+                    android:layout_weight="1"
+                    android:textColor="@color/registered"
+                    android:textSize="14dp" />
+                <TextView
+                    android:id="@+id/text_forget_password"
+                    android:clickable="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="21dp"
+                    android:text="@string/login_forget_pwd"
+                    android:textColor="@color/registered"
+                    android:textSize="14dp" />
+            </LinearLayout>
 
 
         </LinearLayout>
