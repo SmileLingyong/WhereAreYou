@@ -16,4 +16,6 @@
     <string name="login_button_text">登录</string>
     <string name="login_forget_pwd">忘记密码</string>
     <string name="login_register">注册新用户</string>
+    <string name="btn_dialog_single_loc_name">单次共享</string>
+    <string name="btn_dialog_real_time_loc_name">实时共享</string>
 </resources>
