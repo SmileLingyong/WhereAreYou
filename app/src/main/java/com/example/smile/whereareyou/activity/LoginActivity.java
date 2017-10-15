@@ -1,4 +1,4 @@
-package com.example.smile.whereareyou.activity.login;
+package com.example.smile.whereareyou.activity;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -24,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smile.whereareyou.R;
-import com.example.smile.whereareyou.activity.MainActivity;
 
 /**
  * Created by lly54 on 2017/10/12.

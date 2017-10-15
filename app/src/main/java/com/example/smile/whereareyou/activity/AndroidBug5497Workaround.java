@@ -1,4 +1,4 @@
-package com.example.smile.whereareyou.activity.login;
+package com.example.smile.whereareyou.activity;
 
 import android.app.Activity;
 import android.graphics.Rect;

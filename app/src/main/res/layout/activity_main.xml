@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,14 +19,69 @@
             layout="@layout/toolbar"
             android:fitsSystemWindows="true" />
 
-        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/bmapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true">
+        </com.baidu.mapapi.map.MapView>
+
+        <TextView
+            android:id="@+id/position_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar_main"
+            android:background="#57ffffff"
+            android:paddingLeft="2dp" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="14dp"
+            android:layout_marginStart="18dp">
+
+            <ImageView
+                android:id="@+id/btn_action_location_bg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_refresh_location_bg" />
+
+            <ImageView
+                android:id="@+id/btn_action_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:clickable="true"
+                android:src="@drawable/ic_action_refresh_location" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/btn_action_start_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_action_start_location" />
+
+
+
+
+
+
+
+
+        <!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true">
 
-            <!--  android:divider="@null" 设置listview行之间无的分割线  -->
+            &lt;!&ndash;  android:divider="@null" 设置listview行之间无的分割线  &ndash;&gt;
 
 
             <android.support.design.widget.FloatingActionButton
@@ -45,9 +100,9 @@
                 app:fabSize="normal"
                 app:pressedTranslationZ="12dp"
                 tools:ignore="RtlHardcoded" />
-        </FrameLayout>
+        </FrameLayout>-->
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <!--app:headerLayout="@layout/nav_header"-->
     <!--  因为在主页添加了点击头像按钮事件，已经动态加载了header这个布局文件，所以这里不用引入了  -->
