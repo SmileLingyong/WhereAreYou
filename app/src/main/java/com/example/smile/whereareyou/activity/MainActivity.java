@@ -2,6 +2,8 @@ package com.example.smile.whereareyou.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -9,11 +11,13 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
@@ -38,6 +42,7 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.Text;
 import com.baidu.mapapi.model.LatLng;
 import com.example.smile.whereareyou.R;
 
@@ -65,10 +70,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isFirstLocate = true;   //是否首次定位
     private boolean isRequest = false;      //是否点击请求定位按钮
 
+    private String username;
+    private String password;
+
 
     //结束启动界面,转换到主页
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, MainActivity.class));
+        // 检查读写存储权限
+//        int permissionCheck = ContextCompat.checkSelfPermission()
     }
 
 
@@ -87,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         initView();   // 初始化ToolBar以及抽屉栏，以及相应的点击事件
         initBaiduMapView();     //初始化百度地图，以及定位按钮
-
     }
 
 
@@ -115,8 +124,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         headLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_login = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent_login);
+                final SharedPreferences preferences = getSharedPreferences("userInfo", Activity.MODE_PRIVATE);
+                username = preferences.getString("username", "");
+                password = preferences.getString("password", "");
+                if (!username.equals("") && !password.equals("")) {
+                    AlertDialog dialog = new AlertDialog.Builder(MainActivity.this).setTitle("注意").setNegativeButton("取消", null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putString("username", "");
+                            editor.putString("password", "");
+                            editor.apply();
+                            refresh();
+                        }
+                    }).setMessage("是否登出账户？").create();
+                    dialog.show();
+                } else {
+                    Intent intent_login = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent_login);
+                }
             }
         });
 
@@ -156,6 +182,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        // 启动时获取用户的信息
+        SharedPreferences preferences = getSharedPreferences("userInfo", Activity.MODE_PRIVATE);
+        username = preferences.getString("username", "");
+        password = preferences.getString("password", "");
+        if (username.equals("") && password.equals("")) {
+            Toast.makeText(MainActivity.this, "用户未登录", Toast.LENGTH_SHORT).show();
+        } else {
+            TextView nameTV = (TextView) navHeaderView.findViewById(R.id.username);
+            TextView emailTV = (TextView) navHeaderView.findViewById(R.id.mail);
+            emailTV.setText(username);
+            // TODO: 获取用户名
+            nameTV.setText(username);
+        }
+    }
+
+    private void refresh() {
+        finish();
+        Intent backLoginActivity = new Intent(MainActivity.this, MainActivity.class);
+        startActivity(backLoginActivity);
     }
 
     public void initBaiduMapView() {

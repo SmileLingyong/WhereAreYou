@@ -7,16 +7,15 @@
     android:clipToPadding="true"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/login_logo"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+    <ProgressBar
+        android:id="@+id/login_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="80dp"
-        android:background="@null"
-        android:scaleType="centerCrop"
-        android:src="@mipmap/ic_launcher" />
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -31,16 +30,28 @@
         android:scrollbarThumbVertical="@android:color/transparent"
         android:scrollbars="vertical">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <ImageView
+                android:id="@+id/login_logo"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="80dp"
+                android:background="@null"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_launcher" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:layout_marginTop="200dp"
+                android:layout_marginTop="50dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingLeft="13dp">

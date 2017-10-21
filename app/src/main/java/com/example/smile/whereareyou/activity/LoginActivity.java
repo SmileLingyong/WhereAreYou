@@ -1,9 +1,16 @@
 package com.example.smile.whereareyou.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -19,20 +26,43 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.smile.whereareyou.R;
+import com.example.smile.whereareyou.activity.MainActivity;
+import com.example.smile.whereareyou.activity.RegisterActivity;
+import com.example.smile.whereareyou.db.User;
+import com.example.smile.whereareyou.util.HttpUtil;
+import com.example.smile.whereareyou.util.Utility;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by lly54 on 2017/10/12.
  */
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String login_number = "123456";
-    private static final String login_password = "000000";
+    private UserLoginTask mAuthTask = null;
+
+    private ProgressBar mLoginProgress;
     private ImageView logo;
     private ScrollView scrollView;
     private EditText et_number;
@@ -59,6 +89,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initView() {
+        mLoginProgress = (ProgressBar) findViewById(R.id.login_progress);
         logo = (ImageView) findViewById(R.id.login_logo);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
         et_number = (EditText) findViewById(R.id.et_number);
@@ -75,7 +106,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         keyHeight = screenHeight / 3;   //键盘弹起高度为屏幕的1/3
 
         //设置全屏
-        if(isFullScreen(this)){
+        if (isFullScreen(this)) {
             AndroidBug5497Workaround.assistActivity(this);
         }
 
@@ -83,7 +114,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     public boolean isFullScreen(Activity activity) {
         return (activity.getWindow().getAttributes().flags &
-                WindowManager.LayoutParams.FLAG_FULLSCREEN)==WindowManager.LayoutParams.FLAG_FULLSCREEN;
+                WindowManager.LayoutParams.FLAG_FULLSCREEN) == WindowManager.LayoutParams.FLAG_FULLSCREEN;
     }
 
 
@@ -247,21 +278,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (!TextUtils.isEmpty(pwd))
                     et_password.setSelection(pwd.length());
                 break;
-            case R.id.btn_login:    //用于测试的 账号和密码
-                if (et_number.getText().toString().equals(login_number) && et_password.getText().toString().equals(login_password)) {
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    Toast.makeText(this, "登录成功！", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(this, "请输入正确的账号和密码", Toast.LENGTH_SHORT).show();
-                }
+            case R.id.btn_login:
+                // 尝试登录
+                attemptLogin();
                 break;
             case R.id.text_registered:
-                Toast.makeText(this, "注册新用户", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "注册新用户", Toast.LENGTH_SHORT).show();
+                Intent createAccount = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(createAccount);
                 break;
             case R.id.text_forget_password:
-                Toast.makeText(this, "忘记密码", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "暂不支持找回密码", Toast.LENGTH_SHORT).show();
                 break;
 
             default:
@@ -273,7 +300,186 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Toast.makeText(this, "登录失败！", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "取消登录！", Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    /**
+     * 进行登录操作
+     */
+    private void attemptLogin() {
+        if (mAuthTask != null) {
+            return;
+        }
+
+        // 重置错误提示
+        et_number.setError(null);
+        et_password.setError(null);
+
+        // 获取登录信息
+        String email = et_number.getText().toString();
+        String password = et_password.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // 检查密码填写是否符合规则
+        if (TextUtils.isEmpty(password)) {
+            et_password.setError(getString(R.string.error_field_required));
+        } else if (!isPasswordValid(password)) {
+            et_password.setError(getString(R.string.error_invalid_password));
+            focusView = et_password;
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(email)) {
+            et_number.setError(getString(R.string.error_field_required));
+            focusView = et_number;
+            cancel = true;
+        } else if (!isEmailValid(email)) {
+            et_number.setError(getString(R.string.error_invalid_email));
+            focusView = et_number;
+            cancel = true;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
+            showProgress(true);
+            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask.execute((Void) null);
+//            Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private boolean isEmailValid(String email) {
+        if (email == null || email.equals("")) return false;
+        Pattern p = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
+        Matcher m = p.matcher(email);
+        return m.matches();
+        // 简单匹配是否包含 "@"
+        //return email.contains("@");
+    }
+
+    private boolean isPasswordValid(String password) {
+        return password.length() >= 4;
+    }
+
+    /**
+     * 显示loading进度条
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        scrollView.setVisibility(show ? View.GONE : View.VISIBLE);
+        scrollView.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                scrollView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        mLoginProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+        mLoginProgress.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                mLoginProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    private void refresh() {
+        finish();
+        Intent backLoginActivity = new Intent(LoginActivity.this, LoginActivity.class);
+        startActivity(backLoginActivity);
+    }
+
+    /**
+     * 异步登录操作
+     */
+    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final String mEmail;
+        private final String mPassword;
+
+        UserLoginTask(String email, String password) {
+            mEmail = email;
+            mPassword = password;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            final String loginUrl = "http://47.93.20.40:8080/map-track/login";
+            final RequestBody requestBody = new FormBody.Builder()
+                    .add("username", mEmail)
+                    .add("password", mPassword)
+                    .build();
+            HttpUtil.sendOkHttpRequest(loginUrl, requestBody, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 网络不通引起的失败
+                            Toast.makeText(LoginActivity.this, "请检查你的网络", Toast.LENGTH_SHORT).show();
+                            refresh();
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    JSONObject loginResponse = Utility.parseResponse(response);
+                    final String msg = loginResponse.optString("msg");
+                    final String status = loginResponse.optString("status");
+//                    Log.d("msg", msg);
+//                    Log.d("status", status);
+                    // if status == 0 ,登录成功，if status == -1，登录失败
+                    if (0 == Integer.parseInt(status)) {
+                        LoginActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        // 跳转到 Main Activity 并且更新信息
+                        Intent goMainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(goMainActivity);
+                        // 更新本地的SharedPreference信息
+                        SharedPreferences sharedPreferences = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("username", mEmail);
+                        editor.putString("password", mPassword);
+                        editor.apply();
+                    } else if (-1 == Integer.parseInt(status)) {
+                        LoginActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                refresh();
+                            }
+                        });
+                    }
+                }
+            });
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            mAuthTask = null;
+
+            super.onPostExecute(aBoolean);
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
     }
 }
