@@ -29,4 +29,19 @@
     <string name="error_register_failed">注册失败</string>
     <string name="btn_dialog_single_loc_name">单次共享</string>
     <string name="btn_dialog_real_time_loc_name">实时共享</string>
+
+    <!-- AboutMe 页面相关 Strings -->
+    <string name="project_introduction">\t\t\t\t
+        WhereAreYou采用Google 官方推出的Material Design 设计风格，启动界面采用渐入式动画，随机显示引导图片。
+        使用侧滑栏展示主要功能：主页地图功能，查询历史轨迹功能，更换主题功能，关于作者功能，并且支持用户的注册以及登录。
+        其中主页地图功能，使用百度LBS地图将用户实时显示在地图之上，然后用户可以通过点击共享位置按钮，选择共享位置的方式，
+        一种是单次共享位置，一种是实时轨迹共享。
+    </string>
+
+    <string name="project_thanks">\t\t\t\t 项目参考了bxbxbai的知乎专栏开源项目 <a href="https://github.com/bxbxbai/ZhuanLan">ZhuanLan</a> ，并使用了百度地图SDK，
+        感谢一直在为开源做贡献的你们。
+    </string>
+
+    <string name="my_blog">\t\t\t\t GitHub 地址 <a href="https://github.com/waiting123">https://github.com/waiting123</a> 自己还要更加努力才行！</string>
+    <string name="my_gmail">\t\t\t\t 我的邮箱: smilelingyong@gmail.com</string>
 </resources>

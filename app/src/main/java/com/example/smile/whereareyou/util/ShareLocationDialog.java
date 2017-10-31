@@ -1,4 +1,4 @@
-package com.example.smile.whereareyou.activity;
+package com.example.smile.whereareyou.util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -20,15 +20,15 @@ import com.example.smile.whereareyou.R;
  * Created by lly54 on 2017/10/15.
  */
 
-public class StartLocationDialog extends PopupWindow {
+public class ShareLocationDialog extends PopupWindow {
 
     private Button singleLocationBtnDialog;
     private Button realTimeLocationBtnDialog;
     private View mMenuView;
 
-    // 注意：这里我们为了测试方便，就没有写三个参数的构造函数。具体参考BaiduTrack项目
+
     @SuppressLint({"InflateParams", "ClickableViewAccessibility"})
-    public StartLocationDialog(final Activity context) {
+    public ShareLocationDialog(final Activity context, OnClickListener singleLocationListener, OnClickListener realTimeLocationListener) {
         super(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMenuView = inflater.inflate(R.layout.dialog_start_location, null);
@@ -57,26 +57,7 @@ public class StartLocationDialog extends PopupWindow {
             }
         });
 
-        // 点击单次共享
-        singleLocationBtnDialog.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "单次共享", Toast.LENGTH_SHORT).show();
-                dismiss();  // 销毁弹出框
-            }
-        });
-
-        // 点击实时共享
-        realTimeLocationBtnDialog.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "实时共享", Toast.LENGTH_SHORT).show();
-                dismiss();  // 销毁弹出框
-            }
-        });
-
-
+        singleLocationBtnDialog.setOnClickListener(singleLocationListener); // 设置单次按钮点击事件
+        realTimeLocationBtnDialog.setOnClickListener(realTimeLocationListener); // 设置实时按钮点击事件
     }
-
-
 }
