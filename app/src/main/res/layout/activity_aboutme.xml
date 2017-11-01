@@ -39,7 +39,7 @@
                     android:layout_gravity="center"
                     android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/icon_head" />
+                    android:src="@mipmap/ic_launcher" />
             </FrameLayout>
 
             <android.support.v7.widget.Toolbar

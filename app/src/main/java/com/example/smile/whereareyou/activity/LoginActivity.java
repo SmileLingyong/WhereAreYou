@@ -435,7 +435,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     JSONObject loginResponse = Utility.parseResponse(response);
-                    final String msg = loginResponse.optString("msg");
+                    final String msg = loginResponse.optString("name");
                     final String status = loginResponse.optString("status");
 //                    Log.d("msg", msg);
 //                    Log.d("status", status);
@@ -444,7 +444,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         LoginActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
                             }
                         });
                         // 跳转到 Main Activity 并且更新信息
@@ -455,6 +455,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("username", mEmail);
                         editor.putString("password", mPassword);
+                        editor.putString("name", msg);
                         editor.apply();
                     } else if (-1 == Integer.parseInt(status)) {
                         LoginActivity.this.runOnUiThread(new Runnable() {

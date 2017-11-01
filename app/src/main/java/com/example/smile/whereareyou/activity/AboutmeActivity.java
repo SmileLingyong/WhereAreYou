@@ -29,7 +29,7 @@ public class AboutmeActivity extends AppCompatActivity {
         TextView tvThanks = (TextView) findViewById(R.id.tv_thanks);
         TextView tvBlog = (TextView) findViewById(R.id.tv_blog);
 
-        collapsingToolbar.setTitle("生活点滴");
+        collapsingToolbar.setTitle("WhereAreYou");
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();    //设置默认返回上一级按钮
         if (actionBar != null) {

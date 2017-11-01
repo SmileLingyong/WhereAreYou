@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView positionText;      // 定位显示数据
     private ImageView actionRefersh;    // 更新按钮
     private ImageView actionRefershBg;  // 更新按钮背景
-    private ImageView actionShareLocation; // 共享位置按钮图片
+    private ImageView actionShareLocation;  // 共享位置按钮图片
     private BitmapDescriptor icTraceStart;  // 起点图片
     private BitmapDescriptor icTraceEnd;    // 终点图片
     private ShareLocationDialog shareLocationDialog;
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LocationClient mLocationClient; // 定位服务的客户端
     private MapView mapView;            // 显示地图的视图（View）
     private BaiduMap baiduMap;          // BaiduMap类是地图的总控制器，定义 BaiduMap 地图对象的操作方法与接口
-    private BDLocation location;        // 回调的百度坐标类，内部封装了如经纬度、半径等属性信息
+    public BDLocation location;         // 回调的百度坐标类，内部封装了如经纬度、半径等属性信息
     private MyLocationData locData;     // 当前location位置数据
     private SensorManager mSensorManager;// 传感器管理器
 
@@ -81,9 +81,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     LatLng last = new LatLng(0, 0);    // 上一个定位点
     MapStatus.Builder builder;  // 用于构建当前设备点的位置信息
 
-    private boolean isShowLog = false;    // 是否显示调试详细定位信息
+    private boolean isShowLog = false;    // 是否显示详细定位信息, 默认是关闭的
     private boolean isFirstLocate = true;   //是否首次定位
-    private boolean isRealTimeLocationFirst = true; // 是否是实时定位第一次
+    private boolean isRealTimeLocationFirst = true; // 是否是本次实时定位第一次获取位置
     private boolean isRequest = false;      //是否点击请求定位按钮
     private boolean isSingleLocation = false;    // 是否点击单次共享
     private boolean isRealTimeLocation = false;  // 是否点击实时共享
@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private double lastX;   // 记录上一次的设备在x轴方向的位置
     private float mCurrentZoom = 19f;   // 默认地图缩放比例
 
+    private String name;
     private String username;
     private String password;
 
@@ -181,8 +182,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         break;
                     case R.id.nav_history:
                         mDrawerLayout.closeDrawers();
-//                        Intent intent_news = new Intent(MainActivity.this, NewsActivity.class);
-//                        startActivity(intent_news);
+
+
                         break;
                     case R.id.nav_theme:
                         ChangeTheme();
@@ -195,12 +196,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mDrawerLayout.closeDrawers();
                         break;
                     case R.id.nav_setting:
-                        if (isShowLog) {
+                        if (isShowLog) {    // 若已经打开了显示定位详情
                             AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
                             dialog.setTitle("是否关闭显示定位详细信息");
                             dialog.setMessage("请您选择~");
                             dialog.setCancelable(true);
-                            dialog.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                            dialog.setPositiveButton("关闭", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     positionText.setVisibility(View.INVISIBLE); // 将TextView设置为不可见
@@ -208,10 +209,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     Toast.makeText(MainActivity.this, "显示定位详细信息已关闭", Toast.LENGTH_SHORT).show();
                                 }
                             });
-                            dialog.setPositiveButton("不关闭", new DialogInterface.OnClickListener() {
+                            dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(MainActivity.this, "没有关闭", Toast.LENGTH_SHORT).show();
                                 }
                             });
                             dialog.show();
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             dialog.setTitle("开启显示定位详细信息");
                             dialog.setMessage("请您选择~");
                             dialog.setCancelable(true);
-                            dialog.setNegativeButton("打开", new DialogInterface.OnClickListener() {
+                            dialog.setPositiveButton("打开", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     positionText.setVisibility(View.VISIBLE);
@@ -228,18 +228,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     Toast.makeText(MainActivity.this, "显示定位详细信息已打开", Toast.LENGTH_SHORT).show();
                                 }
                             });
-                            dialog.setPositiveButton("不打开", new DialogInterface.OnClickListener() {
+                            dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(MainActivity.this, "没有打开", Toast.LENGTH_SHORT).show();
                                 }
                             });
                             dialog.show();
 
                         }
 
-//
-//
                         mDrawerLayout.closeDrawers();
                         break;
                     default:
@@ -253,6 +250,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // 启动时获取用户的信息
         SharedPreferences preferences = getSharedPreferences("userInfo", Activity.MODE_PRIVATE);
+        name = preferences.getString("name", "");
         username = preferences.getString("username", "");
         password = preferences.getString("password", "");
         if (username.equals("") && password.equals("")) {
@@ -262,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             TextView emailTV = (TextView) navHeaderView.findViewById(R.id.mail);
             emailTV.setText(username);
             // TODO: 获取用户名
-            nameTV.setText(username);
+            nameTV.setText(name);
         }
     }
 
@@ -457,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btn_action_location:
                 Toast.makeText(MainActivity.this, "定位到当前位置", Toast.LENGTH_SHORT).show();
-                // 每当点击一次按钮，就将isRequest 改为true，以便后面调用navigateTo()方法，将地图移动到当前设备位置。
+                // 每当点击一次按钮，就将isRequest 改为true，以便后面调用请求定位，并将地图移动到当前位置
                 isRequest = true;
                 requestLocation();
                 break;
@@ -467,15 +465,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // 停止共享位置，将百度地图模式设置为正常模式
                     baiduMap.setMyLocationConfiguration(new MyLocationConfiguration(
                             com.baidu.mapapi.map.MyLocationConfiguration.LocationMode.NORMAL, true, null));
-
                     // 并将共享位置图标复原
                     actionShareLocation.setImageResource(R.drawable.ic_action_share_location);
+                    requestLocation();  // 然后再次请求定位
 
-                    // 将停止实时共享标志位置为true
-                    isStopRealTimeLocation = true;
-                    // 将共享位置的标志位都重置
+                    if (isRealTimeLocation) {
+                        // 将停止实时共享标志位置为true
+                        isStopRealTimeLocation = true;
+                    } else if (isSingleLocation) {
+                        // 将停止实时共享标志位置为false
+                        isStopRealTimeLocation = false;
+                    }
+
+                    // 然后再将共享位置的标志位都重置
                     isSingleLocation = false;
                     isRealTimeLocation = false;
+
                 } else {
 
                     // 实例化shareLocationDialog
@@ -502,8 +507,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             requestLocation();  // 请求定位
             isSingleLocation = true;    // 表示已经开启了单次共享功能
             actionShareLocation.setImageResource(R.drawable.ic_action_stop_share_location); // 更改共享图标为停止共享样式
+
             baiduMap.setMyLocationConfiguration(new MyLocationConfiguration(    // 将百度地图设置为跟随模式
                     MyLocationConfiguration.LocationMode.FOLLOWING, true, null));
+            requestLocation();  // 并请求定位
             shareLocationDialog.dismiss();  // 销毁弹出框
         }
     };
@@ -581,8 +588,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         points.add(ll);
         last = ll;
-        //有5个连续的点之间的距离小于10，认为gps已稳定，以最新的点为起始点
-        if (points.size() >= 5) {
+        //有3个连续的点之间的距离小于10，认为gps已稳定，以最新的点为起始点
+        if (points.size() >= 3) {
             points.clear();
             return ll;
         }
@@ -624,7 +631,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // 将当前获取到的设备位置信息显示在 TextView上
             positionText.setText(currentPosition);
 
-
             // 注意：这里只接受GPS点，需要在室外定位， 自己后来加上了可以使用网络定位
             if (location.getLocType() == BDLocation.TypeGpsLocation || location.getLocType() == BDLocation.TypeNetWorkLocation) {
 
@@ -633,6 +639,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     OverlayOptions endOptions = new MarkerOptions().position(last)
                             .icon(icTraceEnd).zIndex(9).draggable(true);
                     baiduMap.addOverlay(endOptions);
+                    points.removeAll(points);   // 并将所有的定位点移除
                     isRealTimeLocation = false;
                 }
 
@@ -660,6 +667,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
 
+                // 实时定位
                 if (isRealTimeLocation) {
                     // 启动实时定位后，找一个比较稳定的点作为轨迹的起点
                     if (isRealTimeLocationFirst) {
@@ -682,6 +690,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         return; // 画轨迹最少得2个点，首地定位到这里就可以返回了
                     }
 
+
                     // 从第二个点开始
                     LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
                     // sdk回调gps位置的频率是1秒1个，位置点太近动态画在图上不是很明显，可以设置点之间距离大于为5米才添加到集合中
@@ -698,15 +707,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mapView.getMap().clear();
 
                     // 起始点图层也会被清除，重新绘画
-                    MarkerOptions oStart = new MarkerOptions();
-                    oStart.position(points.get(0));
-                    oStart.icon(icTraceStart);
-                    baiduMap.addOverlay(oStart);
+                    MarkerOptions startOption = new MarkerOptions();
+                    startOption.position(points.get(0));
+                    startOption.icon(icTraceStart);
+                    baiduMap.addOverlay(startOption);
 
                     // 将points集合中的点绘制轨迹线条图层，显示在地图上
                     OverlayOptions ooPolyline = new PolylineOptions().width(13).color(0xAAFF0000).points(points);
                     mPolyline = (Polyline) baiduMap.addOverlay(ooPolyline);
+
+
+
+                  // 单次定位
+                } else if (isSingleLocation) {
+
+                    // 清除上一次轨迹，避免重叠绘画
+                    mapView.getMap().clear();
+
+                    // 显示当前定位点，不缩放地图
+                    LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+                    locateAndZoom(location, ll, false);
                 }
+
             }
         }
     }

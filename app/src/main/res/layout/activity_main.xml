@@ -27,11 +27,20 @@
         </com.baidu.mapapi.map.MapView>
 
         <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar_main"
+            android:background="#57ffffff"
+            android:paddingLeft="2dp" />
+
+        <TextView
             android:id="@+id/position_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/toolbar_main"
             android:background="#57ffffff"
+            android:visibility="gone"
             android:paddingLeft="2dp" />
 
         <RelativeLayout
